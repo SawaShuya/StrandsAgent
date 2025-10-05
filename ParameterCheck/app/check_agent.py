@@ -1,5 +1,4 @@
 from strands import Agent
-from strands_tools import file_read, file_write, editor
 
 # Define a focused system prompt for file operations
 system_prompt = """

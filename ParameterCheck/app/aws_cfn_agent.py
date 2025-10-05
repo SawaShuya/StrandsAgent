@@ -1,5 +1,4 @@
 import os
-import boto3
 
 from strands import Agent
 from strands.tools.mcp import MCPClient
@@ -33,11 +32,6 @@ aws_cfn_mcp_client = MCPClient(
     )
 )
 
-# bedrock_model = BedrockModel(
-#     model_id="apac.anthropic.claude-sonnet-4-20250514-v1:0",
-#     temperature=0.0,
-#     boto_session=session
-# )
 
 def get_cfn_template(bedrock_model, requested_template):
     print("\n\nStart get_cfn_template ---------------------------------------------------------------")
