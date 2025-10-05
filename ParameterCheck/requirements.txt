@@ -1,0 +1,4 @@
+strands-agents-tools==0.2.9
+mcp
+boto3
+uv

@@ -1,0 +1,198 @@
+Parameters:
+  System:
+    Type: String
+    Description: System name for resource naming
+  
+  Env:
+    Type: String
+    Description: Environment name for resource naming
+  
+  VpcID:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC ID where resources will be created
+
+  VpcCidr:
+    Type: String
+    Description: VPC CIDR block for security group ingress rule
+  
+  Subnet01:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet ID for load balancer
+
+  Subnet02:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet ID for load balancer
+  
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "${System}-${Env}-sg-alb"
+      GroupName: !Sub "${System}-${Env}-sg-alb"
+      VpcId: !Ref VpcID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref VpcCidr
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: '-1'
+          FromPort: -1
+          ToPort: -1
+      Tags:
+        - Value: !Sub "${System}-${Env}-sg-alb"
+          Key: Name
+  TargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      IpAddressType: "ipv4"
+      HealthCheckIntervalSeconds: 30
+      Matcher:
+        HttpCode: "200"
+      HealthCheckPath: "/"
+      Port: 80
+      Targets: []
+      HealthCheckEnabled: true
+      ProtocolVersion: "HTTP1"
+      UnhealthyThresholdCount: 2
+      HealthCheckTimeoutSeconds: 5
+      Name: !Sub "${System}-${Env}-tg"
+      VpcId: !Ref VpcID
+      HealthyThresholdCount: 5
+      HealthCheckProtocol: "HTTP"
+      TargetGroupAttributes:
+        - Value: "lb_cookie"
+          Key: "stickiness.type"
+        - Value: "86400"
+          Key: "stickiness.app_cookie.duration_seconds"
+        - Value: "1"
+          Key: "target_group_health.dns_failover.minimum_healthy_targets.count"
+        - Value: "use_load_balancer_configuration"
+          Key: "load_balancing.cross_zone.enabled"
+        - Value: "86400"
+          Key: "stickiness.lb_cookie.duration_seconds"
+        - Value: "off"
+          Key: "target_group_health.dns_failover.minimum_healthy_targets.percentage"
+        - Value: "false"
+          Key: "stickiness.enabled"
+        - Value: "off"
+          Key: "target_group_health.unhealthy_state_routing.minimum_healthy_targets.percentage"
+        - Value: "0"
+          Key: "slow_start.duration_seconds"
+        - Value: "300"
+          Key: "deregistration_delay.timeout_seconds"
+        - Value: "1"
+          Key: "target_group_health.unhealthy_state_routing.minimum_healthy_targets.count"
+        - Value: "off"
+          Key: "load_balancing.algorithm.anomaly_mitigation"
+        - Value: ""
+          Key: "stickiness.app_cookie.cookie_name"
+        - Value: "round_robin"
+          Key: "load_balancing.algorithm.type"
+      TargetType: "ip"
+      HealthCheckPort: "traffic-port"
+      Protocol: "HTTP"
+      Tags: []
+  
+  LoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      IpAddressType: "ipv4"
+      SecurityGroups:
+        - !Ref SecurityGroup
+      LoadBalancerAttributes:
+        - Value: ""
+          Key: "access_logs.s3.prefix"
+        - Value: "append"
+          Key: "routing.http.xff_header_processing.mode"
+        - Value: "true"
+          Key: "routing.http2.enabled"
+        - Value: "false"
+          Key: "waf.fail_open.enabled"
+        - Value: "alb-accesslog-820356253015"
+          Key: "connection_logs.s3.bucket"
+        - Value: "false"
+          Key: "access_logs.s3.enabled"
+        - Value: "false"
+          Key: "zonal_shift.config.enabled"
+        - Value: "defensive"
+          Key: "routing.http.desync_mitigation_mode"
+        - Value: ""
+          Key: "connection_logs.s3.prefix"
+        - Value: "false"
+          Key: "routing.http.x_amzn_tls_version_and_cipher_suite.enabled"
+        - Value: "false"
+          Key: "routing.http.preserve_host_header.enabled"
+        - Value: "true"
+          Key: "load_balancing.cross_zone.enabled"
+        - Value: "false"
+          Key: "routing.http.xff_client_port.enabled"
+        - Value: "alb-accesslog-820356253015"
+          Key: "access_logs.s3.bucket"
+        - Value: "false"
+          Key: "deletion_protection.enabled"
+        - Value: "3600"
+          Key: "client_keep_alive.seconds"
+        - Value: "false"
+          Key: "routing.http.drop_invalid_header_fields.enabled"
+        - Value: "false"
+          Key: "connection_logs.s3.enabled"
+        - Value: "60"
+          Key: "idle_timeout.timeout_seconds"
+      Subnets:
+        - !Ref Subnet01
+        - !Ref Subnet02
+      Type: "application"
+      Scheme: "internal"
+      Name: !Sub "${System}-${Env}-alb"
+
+  Listener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      ListenerAttributes:
+      - Value: "true"
+        Key: "routing.http.response.server.enabled"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.x_frame_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_methods.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_origin.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_credentials.header_value"
+      - Value: ""
+        Key: "routing.http.response.x_content_type_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.content_security_policy.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_expose_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.strict_transport_security.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_max_age.header_value"
+      Protocol: "HTTP"
+      LoadBalancerArn: !Ref LoadBalancer
+      DefaultActions:
+        - Order: 1
+          FixedResponseConfig:
+            ContentType: "text/plain"
+            StatusCode: "503"
+          Type: "fixed-response"
+      Port: 80
+
+  ListenerRule:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+      Priority: 10
+      Conditions:
+        - Field: "path-pattern"
+          PathPatternConfig:
+            Values:
+            - "/sample*"
+      ListenerArn: !Ref Listener
