@@ -22,4 +22,9 @@ if __name__ == "__main__":
     # print(f"Final Report:\n{final_report}")
 
 
+    print("\n\nWrite result to ./output/result.md ---------------------------------------------------------------")
+    with open('./output/result.md', 'w', encoding='utf-8') as f:
+        f.write(final_report)
+
+
 

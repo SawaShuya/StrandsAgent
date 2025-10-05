@@ -23,12 +23,12 @@ if [ $? -eq 0 ]; then
     # Run container
     echo "Starting container..."
     # For Linux
-    # docker run -d --name ${CONTAINER_NAME} --env-file ./.env -v $(pwd)/requested-template:/app/requested-template ${CONTAINER_NAME}
+    # docker run -d --name ${CONTAINER_NAME} --env-file ./.env -v $(pwd)/requested-template:/app/requested-template -v $(pwd)/output:/app/output ${CONTAINER_NAME}
     
     # For Docker Desktop for Windows
     win_path=$(pwd | sed -E 's|^/([a-z])|\U\1:|')
     echo $win_path
-    docker run -d --name ${CONTAINER_NAME} --env-file ./.env -v $win_path/requested-template:/app/requested-template ${CONTAINER_NAME}
+    docker run -d --name ${CONTAINER_NAME} --env-file ./.env -v $win_path/requested-template:/app/requested-template -v $win_path/output:/app/output ${CONTAINER_NAME}
 
 
     if [ $? -eq 0 ]; then
