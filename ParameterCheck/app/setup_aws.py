@@ -70,7 +70,6 @@ def set_bedrock_model():
     if 'AWS_PROFILE' in os.environ:
         print("Use Profile")
         session = get_session()
-        print(f"Session: {session}")
         bedrock_model = BedrockModel(
             model_id="apac.anthropic.claude-sonnet-4-20250514-v1:0",
             temperature=0.0,
@@ -81,5 +80,4 @@ def set_bedrock_model():
             model_id="apac.anthropic.claude-sonnet-4-20250514-v1:0",
             temperature=0.0
         )
-    print(f"bedrock_model : {bedrock_model}")
     return bedrock_model
