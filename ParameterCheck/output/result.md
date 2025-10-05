@@ -1,73 +1,69 @@
 # CloudFormationテンプレート比較結果
 
-## 比較概要
-- **申請テンプレート名**: reqested-alb-template.yaml
-- **実際のスタック名**: sample-dev-cf-alb
+## 比較結果サマリー
+
+| 申請テンプレート名 | 実際のスタック名 | 総合判定 |
+|---|---|---|
+| reqested-alb-template.yaml | sample-dev-* | ○ |
 
 ## 詳細比較結果
 
 ### SecurityGroup
 
 | 項目 | 申請値 | 実際値 | 比較結果 |
-|------|--------|--------|----------|
-| Type | AWS::EC2::SecurityGroup | AWS::EC2::SecurityGroup | 〇 |
-| SecurityGroupIngress | tcp/80 from 172.31.0.0/16 | tcp/80 from 172.31.0.0/16 | 〇 |
-| SecurityGroupEgress | all traffic to 0.0.0.0/0 | all traffic to 0.0.0.0/0 | 〇 |
-| GroupDescription | 記載なし | sample-dev-sg-alb | 手動確認 |
-| GroupName | 記載なし | sample-dev-sg-alb | 手動確認 |
-| VpcId | 記載なし | vpc-b218f4d4 | 手動確認 |
+|---|---|---|---|
+| Type | AWS::EC2::SecurityGroup | AWS::EC2::SecurityGroup | ○ |
+| SecurityGroupIngress | tcp/80 from 172.31.0.0/16 | tcp/80 from 172.31.0.0/16 | ○ |
+| SecurityGroupEgress | all traffic to 0.0.0.0/0 | all traffic to 0.0.0.0/0 | ○ |
+| VpcId | 未指定 | vpc-b218f4d4 | 手動確認 |
 
 ### TargetGroup
 
 | 項目 | 申請値 | 実際値 | 比較結果 |
-|------|--------|--------|----------|
-| Type | AWS::ElasticLoadBalancingV2::TargetGroup | AWS::ElasticLoadBalancingV2::TargetGroup | 〇 |
-| IpAddressType | ipv4 | ipv4 | 〇 |
-| HealthCheckPath | / | / | 〇 |
-| Port | 80 | 80 | 〇 |
-| VpcId | vpc-b218f4d4 | vpc-b218f4d4 | 〇 |
-| TargetType | ip | ip | 〇 |
-| HealthCheckPort | traffic-port | traffic-port | 〇 |
-| Protocol | HTTP | HTTP | 〇 |
-| stickiness.enabled | false | false | 〇 |
-| Name | 記載なし | sample-dev-tg | 手動確認 |
+|---|---|---|---|
+| Type | AWS::ElasticLoadBalancingV2::TargetGroup | AWS::ElasticLoadBalancingV2::TargetGroup | ○ |
+| IpAddressType | ipv4 | ipv4 | ○ |
+| HealthCheckPath | / | / | ○ |
+| Port | 80 | 80 | ○ |
+| VpcId | vpc-b218f4d4 | vpc-b218f4d4 | ○ |
+| TargetType | ip | ip | ○ |
+| HealthCheckPort | traffic-port | traffic-port | ○ |
+| Protocol | HTTP | HTTP | ○ |
+| stickiness.enabled | false | false | ○ |
 
 ### LoadBalancer
 
 | 項目 | 申請値 | 実際値 | 比較結果 |
-|------|--------|--------|----------|
-| Type | AWS::ElasticLoadBalancingV2::LoadBalancer | AWS::ElasticLoadBalancingV2::LoadBalancer | 〇 |
-| VpcId | vpc-b218f4d4 | vpc-b218f4d4 | 〇 |
-| SecurityGroups | !Ref SecurityGroup | sample-dev-sg-alb (SecurityGroupリソース) | 〇 |
-| Subnets | subnet-0e43c8c66bcd30b52, subnet-0fd29810dddf03d60 | subnet-0e43c8c66bcd30b52, subnet-0fd29810dddf03d60 | 〇 |
-| Type | application | application | 〇 |
-| Scheme | internal | internal | 〇 |
-| Name | 記載なし | sample-dev-alb | 手動確認 |
+|---|---|---|---|
+| Type | AWS::ElasticLoadBalancingV2::LoadBalancer | AWS::ElasticLoadBalancingV2::LoadBalancer | ○ |
+| VpcId | vpc-b218f4d4 | 手動確認（Subnetsから推定） | 手動確認 |
+| SecurityGroups | !Ref SecurityGroup | sample-dev-sg-alb (SecurityGroup参照) | ○ |
+| Subnets | subnet-0e43c8c66bcd30b52, subnet-0fd29810dddf03d60 | subnet-0e43c8c66bcd30b52, subnet-0fd29810dddf03d60 | ○ |
+| Type | application | application | ○ |
+| Scheme | internal | internal | ○ |
 
 ### Listener
 
 | 項目 | 申請値 | 実際値 | 比較結果 |
-|------|--------|--------|----------|
-| Type | AWS::ElasticLoadBalancingV2::Listener | AWS::ElasticLoadBalancingV2::Listener | 〇 |
-| Protocol | HTTP | HTTP | 〇 |
-| LoadBalancerArn | !Ref LoadBalancer | sample-dev-alb (LoadBalancerリソース) | 〇 |
-| Port | 80 | 80 | 〇 |
-| DefaultActions | fixed-response (503 status) | fixed-response (503 status) | 〇 |
+|---|---|---|---|
+| Type | AWS::ElasticLoadBalancingV2::Listener | AWS::ElasticLoadBalancingV2::Listener | ○ |
+| Protocol | HTTP | HTTP | ○ |
+| LoadBalancerArn | !Ref LoadBalancer | sample-dev-alb (LoadBalancer参照) | ○ |
+| Port | 80 | 80 | ○ |
+| DefaultActions | fixed-response (503, text/plain) | fixed-response (503, text/plain) | ○ |
 
 ### ListenerRule
 
 | 項目 | 申請値 | 実際値 | 比較結果 |
-|------|--------|--------|----------|
-| Type | AWS::ElasticLoadBalancingV2::ListenerRule | AWS::ElasticLoadBalancingV2::ListenerRule | 〇 |
-| TargetGroupArn | !Ref TargetGroup | sample-dev-tg (TargetGroupリソース) | 〇 |
-| Priority | 10 | 10 | 〇 |
-| Conditions | path-pattern "/sample*" | path-pattern "/sample*" | 〇 |
-| ListenerArn | !Ref Listener | sample-dev-alb Listener (Listenerリソース) | 〇 |
+|---|---|---|---|
+| Type | AWS::ElasticLoadBalancingV2::ListenerRule | AWS::ElasticLoadBalancingV2::ListenerRule | ○ |
+| Actions | TargetGroupArn !Ref TargetGroup | TargetGroupArn sample-dev-tg (TargetGroup参照) | ○ |
+| Priority | 10 | 10 | ○ |
+| Conditions | path-pattern "/sample*" | path-pattern "/sample*" | ○ |
+| ListenerArn | !Ref Listener | sample-dev-alb Listener (Listener参照) | ○ |
 
-## 総合評価
+## 注意事項
 
-- **一致項目**: 20項目
-- **不一致項目**: 0項目
-- **手動確認必要項目**: 5項目
-
-申請されたテンプレートの主要パラメータは全て正しく設定されています。手動確認が必要な項目は、申請テンプレートに記載されていないリソース名やメタデータ項目のみです。
+- 申請テンプレートではCloudFormation参照（!Ref）を使用していますが、実際のスタックでは具体的なリソース名で参照されています。これは正常な動作です。
+- SecurityGroupのVpcIdが申請テンプレートでは明示的に指定されていませんが、実際のスタックでは設定されています。この点は手動確認が必要です。
+- 全体的に申請内容と実際の作成内容は一致しており、適切にデプロイされています。

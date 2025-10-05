@@ -4,7 +4,7 @@ from strands_tools import file_read
 # Define a focused system prompt for file operations
 system_prompt = """
 あなたは申請されたAWS CLoudFormationテンプレートを管理するスペシャリストです。
-申請された構造化テンプレートはrequested_templateディレクトリに格納されます。
+申請された構造化テンプレートはrequested-templateディレクトリに格納されます。
 
 主な機能
 1. requested_templateディレクトリ内の構造化ファイルを開きます。
@@ -14,11 +14,12 @@ system_prompt = """
 回答時には明確化のため、必ずファイル名も明記してください。
 """
 
-def get_requested_template():
+def get_requested_template(bedrock_model):
     print("\n\nStart get_requested_template ---------------------------------------------------------------")
     file_agent = Agent(
         system_prompt=system_prompt,
         tools=[file_read],
+        model=bedrock_model
     )
 
     result = file_agent("必要な情報を収集してください。")

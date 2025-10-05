@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER_NAME="strands-agent"
+CONTAINER_NAME="strands-agent-parameter-check"
 
 echo "=== Docker Build & Run Script ==="
 
@@ -28,8 +28,8 @@ if [ $? -eq 0 ]; then
     # For Docker Desktop for Windows
     win_path=$(pwd | sed -E 's|^/([a-z])|\U\1:|')
     echo $win_path
-    docker run -d --name ${CONTAINER_NAME} --env-file ./.env -v $win_path/requested-template:/app/requested-template -v $win_path/output:/app/output ${CONTAINER_NAME}
-
+    # docker run -d --name ${CONTAINER_NAME} --env-file ./.env -v $win_path/requested-template:/app/requested-template -v $win_path/output:/app/output ${CONTAINER_NAME}
+    docker run -itd --name ${CONTAINER_NAME} --env-file ./.env -v $win_path/requested-template:/app/requested-template -v $win_path/output:/app/output ${CONTAINER_NAME}
 
     if [ $? -eq 0 ]; then
         echo "Container '${CONTAINER_NAME}' started successfully"
