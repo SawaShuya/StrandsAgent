@@ -9,18 +9,18 @@ CloudFormationテンプレートの申請内容と実際のスタック構成を
 
 以下のいずれかの方法でAWS認証を設定してください：
 
-**方法A: IAMユーザーのアクセスキー**
+**方法A: IAMユーザー/グループの権限で利用する場合**
 - CloudFormationの読み取り権限を持つIAMユーザーを作成
 - アクセスキーIDとシークレットアクセスキーを取得
 
-**方法B: IAMロール（推奨）**
-- CloudFormationの読み取り権限を持つIAMロールを作成
-- AssumeRole可能なプロファイルを設定
+**方法B: IAMロール（Profile）の権限で利用する場合（推奨）**
+- AssumeRole権限を持つIAMユーザーを作成
+- CloudFormationの読み取り権限を持つIAMロールを作成（信頼ポリシーのプリンシパルはアカウントを設定すること）
 
 ### 2. Docker環境
 
 - Docker Desktop または Docker Engine をインストール
-- Windows環境では Docker Desktop for Windows を推奨
+- Windows環境では Docker Desktop for Windows
 
 ### 3. 環境変数ファイル
 
@@ -38,7 +38,7 @@ AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
 AWS_DEFAULT_REGION=ap-northeast-1
 
-# プロファイル認証の場合（上記に加えて）
+# Profileを利用する場合（上記に加えて）
 AWS_PROFILE=your_profile_name
 AWS_PROFILE_ROLE=arn:aws:iam::account:role/role_name
 
@@ -60,7 +60,7 @@ KEYWORD=search_keyword
 - **check_agent.py**: 比較・検証エージェント
   - 申請テンプレートと実際のスタック構成を比較
   - マークダウン形式のレポートを生成
-- **setup_aws.py**: AWS CLI設定ヘルパー
+- **setup_aws.py**: AWS CLI設定/Bedrockモデル設定ヘルパー
 
 ## 実行手順
 
@@ -71,7 +71,7 @@ KEYWORD=search_keyword
 
 2. **申請テンプレートを配置**
    ```bash
-   # requested-template/ディレクトリに検証対象のCloudFormationテンプレートを配置
+   # requested-template/ディレクトリに検証対象（開発チームから申請されたテンプレート）のCloudFormationテンプレートを配置
    cp your-template.yaml requested-template/
    ```
 
@@ -82,7 +82,7 @@ KEYWORD=search_keyword
 
 4. **実行結果確認**
    ```bash
-   docker logs strands-agent
+   docker logs strands-agent-parameter-check
    ```
 
 ## 注意事項
