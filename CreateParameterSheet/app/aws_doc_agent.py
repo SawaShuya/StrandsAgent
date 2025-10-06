@@ -11,7 +11,7 @@ system_prompt = f"""
 主な機能
 1. AWSの公式のCloudFormation Template Referenceの参照を行います。
 2. CloudFormationのTypeの値が{CF_TYPE}と一致したものを探します。
-3. 階層構造をYmal形式の文字列として出力します。参照先がある場合にはそれらをすべて展開した形で出力を行います。出力はテンプレートのみで、解説などは行いません。
+3. 階層構造をYmal形式の文字列として出力します。参照先がある場合にはそれらをすべて展開した形で出力を行います。各項目が"Required"か"Optional"なのか、文字制約があるのかインラインのコメントで記載します。
 """
 
 aws_doc_mcp_client = MCPClient(
