@@ -7,7 +7,7 @@ system_prompt = """
 申請された構造化テンプレートはrequested-templateディレクトリに格納されます。
 
 主な機能
-1. requested_templateディレクトリ内の構造化ファイルを開きます。
+1. requested-templateディレクトリ内の構造化ファイルを開きます。
 2. テンプレート内から情報を取得し、CloudFormationのTypeや各種設定値を抽出します。
 3. 抽出した情報は文字列として出力します。リソース情報のみを出力に含め、構成概要などの説明はしません。
 
