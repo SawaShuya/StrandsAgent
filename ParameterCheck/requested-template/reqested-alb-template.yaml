@@ -27,7 +27,6 @@ TargetGroup:
 LoadBalancer:
   Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
   Properties:
-    VpcId: vpc-b218f4d4
     SecurityGroups:
       - !Ref SecurityGroup
     Subnets:
