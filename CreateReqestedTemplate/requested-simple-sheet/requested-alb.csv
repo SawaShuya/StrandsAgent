@@ -1,0 +1,8 @@
+設定項目, 説明, 値
+TemplateType, CLoudFormationテンプレートの種類, AWS::ElasticLoadBalancingV2::LoadBalancer
+VpcId, VPC ID, vpc-b218f4d4
+SecurityGroup, セキュリティグループ, 作成後に記載
+Subnet, サブネットID, subnet-0e43c8c66bcd30b52
+Subnet, サブネットID, subnet-0fd29810dddf03d60
+Type, ELBの種類(ALB, NLB), application
+Schema, internal or Public, internal
